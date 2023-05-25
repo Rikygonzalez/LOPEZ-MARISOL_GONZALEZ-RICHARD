@@ -1,30 +1,17 @@
 package com.backend.dao.impl;
 
+import com.backend.dao.H2Connection;
 import com.backend.dao.IDao;
 import entity.Odontologo;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class OdontologoDaoH2 implements IDao<Odontologo> {
 
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(OdontologoDaoH2.class));
-
-    @Override
-    public Odontologo guardar(Odontologo odontologo) {
-        return null;
-    }
-
-    @Override
-    public List<Odontologo> listarTodos() {
-        return null;
-    }
-
-    public class OdontologoDaoH2 implements IDao<Odontologo> {
-
-    private static final Logger LOGGER = Logger.getLogger(String.valueOf(OdontologoDaoH2.class));
+    private static final org.apache.log4j.Logger LOGGER = Logger.getLogger(OdontologoDaoH2.class);
 
 
     @Override
@@ -59,7 +46,8 @@ public class OdontologoDaoH2 implements IDao<Odontologo> {
                     LOGGER.error(exception.getMessage());
                     exception.printStackTrace();
                 }
-            } } finally {
+            }
+        } finally {
             try {
                 connection.close();
             } catch (Exception e){
@@ -102,13 +90,11 @@ public class OdontologoDaoH2 implements IDao<Odontologo> {
         return odontologos;
     }
 
-        private Odontologo crearObjetoOdontologo(ResultSet resultSet) throws SQLException {
+    private Odontologo crearObjetoOdontologo(ResultSet resultSet) throws SQLException {
         Long idOdontologo = resultSet.getLong("id");
         int numeroMatricula = resultSet.getInt("numero_matricula");
         String nombre = resultSet.getString("nombre");
         String apellido = resultSet.getString("apellido");
         return new Odontologo(idOdontologo, numeroMatricula, nombre, apellido);
-        }
-}
-
+    }
 }
