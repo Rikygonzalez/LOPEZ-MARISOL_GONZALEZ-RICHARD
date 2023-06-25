@@ -2,7 +2,7 @@ package com.example.integrador.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OdontologoDto {
 
     private Long Id;
