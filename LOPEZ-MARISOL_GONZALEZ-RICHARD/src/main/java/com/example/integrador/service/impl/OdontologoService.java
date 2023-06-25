@@ -28,6 +28,13 @@ public class OdontologoService implements IOdontologoService {
     }
 
     @Override
+    public OdontologoDto registrarOdonotologo(Odontologo odontologo){
+        OdontologoDto odontologoDto = objectMapper.convertValue(odontologoRepository.save(odontologo), OdontologoDto.class);
+        LOGGER.info("Se ha registrado un nuevo odontologo: {}", JsonPrinter.toString(odontologoDto));
+        return odontologoDto;
+    }
+
+    @Override
     public OdontologoDto buscarOdontologoPorId(Long id) {
         Odontologo odontologoBuscado = odontologoRepository.findById(id).orElse(null);
         OdontologoDto odontologoDto = null;
