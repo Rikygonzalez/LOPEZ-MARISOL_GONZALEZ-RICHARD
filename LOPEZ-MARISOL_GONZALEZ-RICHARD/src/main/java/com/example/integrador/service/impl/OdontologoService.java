@@ -2,6 +2,7 @@ package com.example.integrador.service.impl;
 
 import com.example.integrador.dto.OdontologoDto;
 import com.example.integrador.entity.Odontologo;
+import com.example.integrador.exceptions.ResourceNotFoundException;
 import com.example.integrador.repository.OdontologoRepository;
 import com.example.integrador.service.IOdontologoService;
 import com.example.integrador.utils.JsonPrinter;
@@ -28,7 +29,7 @@ public class OdontologoService implements IOdontologoService {
 
     @Override
     public OdontologoDto buscarOdontologoPorId(Long id) {
-        Odontologo odontologoBuscado = odontologoRepository.findBy(id).orElse(null);
+        Odontologo odontologoBuscado = odontologoRepository.findById(id).orElse(null);
         OdontologoDto odontologoDto = null;
         if (odontologoBuscado != null){
             odontologoDto = objectMapper.convertValue(odontologoBuscado, OdontologoDto.class);
@@ -41,16 +42,35 @@ public class OdontologoService implements IOdontologoService {
 
     @Override
     public List<OdontologoDto> listarOdontologos() {
-        return null;
+        List<OdontologoDto> odontologos = odontologoRepository.findAll().stream()
+                .map(odontologo -> objectMapper.convertValue(odontologo, OdontologoDto.class)).toList();
+        LOGGER.info("Listado de todos los odontologos: {}", JsonPrinter.toString(odontologos));
+        return odontologos;
     }
 
     @Override
     public OdontologoDto actualizarOdontologo(Odontologo odontologo) {
-        return null;
+        Odontologo odontologoActualizar = odontologoRepository.findById(odontologo.getId()).orElse(null);
+        OdontologoDto odontologoDtoActualizado = null;
+        if (odontologoActualizar != null){
+            odontologoActualizar = odontologo;
+            odontologoRepository.save(odontologoActualizar);
+            odontologoDtoActualizado = objectMapper.convertValue(odontologoActualizar, OdontologoDto.class);
+            LOGGER.warn("Odontologo actualizado: {}", JsonPrinter.toString(odontologoDtoActualizado));
+        } else {
+            LOGGER.error("No fue posible actualizar los datos ya que el odontologo no se encuentra registrado");
+        }
+        return odontologoDtoActualizado;
     }
 
     @Override
-    public void eliminarOdontologo(Long id) {
-
+    public void eliminarOdontologo(Long id) throws ResourceNotFoundException {
+        if (buscarOdontologoPorId(id) != null){
+            odontologoRepository.deleteById(id);
+            LOGGER.warn("Se eliminó el odontologo con id: {}", id);
+        } else {
+            LOGGER.error("No se ha encontrado el odontologo con id " + id);
+            throw new ResourceNotFoundException("No se ha encontrado el odontologo con id " + id);
+        }
     }
 }
